@@ -19,6 +19,9 @@ jobs:
         with:
           go-version: "~1.23"
 
+      - name: Install libudev
+        run: apt-get update && apt-get install -y libudev-dev
+
       - name: Download packages
         run: go mod download
 
