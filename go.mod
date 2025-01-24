@@ -1,6 +1,6 @@
 module github.com/ngyewch/ft260
 
-go 1.23.3
+go 1.22
 
 require (
 	github.com/bearsh/hid v1.6.0
