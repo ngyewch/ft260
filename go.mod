@@ -1,11 +1,11 @@
 module github.com/ngyewch/ft260
 
-go 1.22
+go 1.22.6
 
 require (
 	github.com/bearsh/hid v1.6.0
 	github.com/urfave/cli/v2 v2.27.5
-	periph.io/x/conn/v3 v3.7.1
+	periph.io/x/conn/v3 v3.7.2
 )
 
 require (
