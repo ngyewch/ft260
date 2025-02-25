@@ -191,3 +191,15 @@ func (dev *Dev) I2CInputReport() ([]byte, error) {
 	dataLength := int(b[1])
 	return b[2 : 2+dataLength], nil
 }
+
+// I2CInputReportWithTimeout performs an I²C Input Report operation with timeout (ms).
+// If timeout is -1, a blocking read is performed.
+func (dev *Dev) I2CInputReportWithTimeout(timeout int) ([]byte, error) {
+	b := make([]byte, 64)
+	_, err := dev.dev.ReadTimeout(b, timeout)
+	if err != nil {
+		return nil, err
+	}
+	dataLength := int(b[1])
+	return b[2 : 2+dataLength], nil
+}
