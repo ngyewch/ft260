@@ -12,15 +12,32 @@ import (
 
 // Bus interface for the FT260 device.
 type Bus struct {
-	name string
-	dev  *ft260.Dev
+	name    string
+	dev     *ft260.Dev
+	options Options
 }
+
+type Options struct {
+	Timeout int // timeout in milliseconds, -1 for no timeout
+}
+
+var (
+	defaultOptions = Options{
+		Timeout: -1,
+	}
+)
 
 // NewBus constructs a new Bus instance.
 func NewBus(name string, dev *ft260.Dev) *Bus {
+	return NewBusWithOptions(name, dev, defaultOptions)
+}
+
+// NewBusWithOptions constructs a new Bus instance with the specified options.
+func NewBusWithOptions(name string, dev *ft260.Dev, options Options) *Bus {
 	return &Bus{
-		name: name,
-		dev:  dev,
+		name:    name,
+		dev:     dev,
+		options: options,
 	}
 }
 
@@ -53,7 +70,7 @@ func (bus *Bus) Tx(addr uint16, w, r []byte) error {
 		if err != nil {
 			return err
 		}
-		readBytes, err := bus.dev.I2CInputReport()
+		readBytes, err := bus.dev.I2CInputReportWithTimeout(bus.options.Timeout)
 		if err != nil {
 			return err
 		}
@@ -78,11 +95,16 @@ func (bus *Bus) SetSpeed(f physic.Frequency) error {
 
 // Register registers all enumerated FT260 I²C buses.
 func Register() error {
+	return RegisterWithOptions(defaultOptions)
+}
+
+// RegisterWithOptions registers all enumerated FT260 I²C buses with the specified options.
+func RegisterWithOptions(options Options) error {
 	deviceInfoList := hid.Enumerate(ft260.VendorID, ft260.ProductID)
 
 	for i, deviceInfo := range deviceInfoList {
 		name := fmt.Sprintf("ft260-%d", i)
-		err := i2creg.Register(name, nil, -1, newOpener(name, deviceInfo))
+		err := i2creg.Register(name, nil, -1, newOpener(name, deviceInfo, options))
 		if err != nil {
 			return err
 		}
@@ -95,7 +117,7 @@ var (
 	hidDeviceMap = make(map[string]*hid.Device)
 )
 
-func newOpener(name string, deviceInfo hid.DeviceInfo) i2creg.Opener {
+func newOpener(name string, deviceInfo hid.DeviceInfo, options Options) i2creg.Opener {
 	return func() (i2c.BusCloser, error) {
 		hidDevice, ok := hidDeviceMap[name]
 		if !ok {
@@ -107,7 +129,7 @@ func newOpener(name string, deviceInfo hid.DeviceInfo) i2creg.Opener {
 			hidDeviceMap[name] = hidDevice
 		}
 		dev := ft260.New(hidDevice)
-		bus := NewBus(name, dev)
+		bus := NewBusWithOptions(name, dev, options)
 		return bus, nil
 	}
 }
