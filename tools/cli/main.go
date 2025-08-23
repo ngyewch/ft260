@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -8,16 +9,16 @@ import (
 
 	"github.com/bearsh/hid"
 	"github.com/ngyewch/ft260"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var (
 	deviceIndexFlag = &cli.UintFlag{
 		Name:    "device-index",
-		EnvVars: []string{"DEVICE_INDEX"},
+		Sources: cli.EnvVars("DEVICE_INDEX"),
 	}
 
-	app = &cli.App{
+	app = &cli.Command{
 		Name:  "ft260",
 		Usage: "FT260 CLI",
 		Flags: []cli.Flag{
@@ -44,14 +45,14 @@ func main() {
 		app.Version = buildInfo.Main.Version
 	}
 
-	err := app.Run(os.Args)
+	err := app.Run(context.Background(), os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
 }
 
-func getDevice(cCtx *cli.Context) (*ft260.Dev, error) {
-	deviceIndex := deviceIndexFlag.Get(cCtx)
+func getDevice(ctx context.Context, cmd *cli.Command) (*ft260.Dev, error) {
+	deviceIndex := cmd.Uint(deviceIndexFlag.Name)
 	deviceInfoList := hid.Enumerate(ft260.VendorID, ft260.ProductID)
 	if int(deviceIndex) >= len(deviceInfoList) {
 		return nil, fmt.Errorf("device index out of range")

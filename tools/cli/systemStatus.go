@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
-func doSystemStatus(cCtx *cli.Context) error {
-	dev, err := getDevice(cCtx)
+func doSystemStatus(ctx context.Context, cmd *cli.Command) error {
+	dev, err := getDevice(ctx, cmd)
 	if err != nil {
 		return err
 	}
