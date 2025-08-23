@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/bearsh/hid"
-	"github.com/ngyewch/ft260"
-	"github.com/urfave/cli/v2"
 	"log"
 	"os"
 	"runtime/debug"
+
+	"github.com/bearsh/hid"
+	"github.com/ngyewch/ft260"
+	"github.com/urfave/cli/v2"
 )
 
 var (

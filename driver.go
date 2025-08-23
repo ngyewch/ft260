@@ -3,6 +3,7 @@ package ft260
 import (
 	"encoding/binary"
 	"fmt"
+
 	"github.com/bearsh/hid"
 )
 

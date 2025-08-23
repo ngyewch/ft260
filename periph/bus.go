@@ -2,12 +2,13 @@ package periph
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/bearsh/hid"
 	"github.com/ngyewch/ft260"
 	"periph.io/x/conn/v3/i2c"
 	"periph.io/x/conn/v3/i2c/i2creg"
 	"periph.io/x/conn/v3/physic"
-	"time"
 )
 
 // Bus interface for the FT260 device.
